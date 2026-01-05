@@ -1,56 +1,49 @@
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
+import api from "../../api/axios";
+import { getUserIdFromToken } from "../../utils/auth";
 
 function Certificate() {
   const { courseId } = useParams();
+  const userId = getUserIdFromToken();
+  const [certificate, setCertificate] = useState(null);
 
-  // UI-only mock data
-  const studentName = "John Doe";
-  const courseTitle = "React Basics";
-  const completionDate = "26 December 2025";
+  useEffect(() => {
+    api.post("/certificates/generate", {
+      userId,
+      courseId: Number(courseId)
+    }).then(() => {
+      api.get(`/certificates/user/${userId}`).then(res => {
+        setCertificate(res.data.find(c => c.courseId === Number(courseId)));
+      });
+    });
+  }, [courseId]);
+
+  if (!certificate) return <p>Generating certificate...</p>;
 
   return (
     <div className="flex justify-center">
-      <div className="bg-white rounded-lg shadow-lg p-10 max-w-3xl w-full text-center space-y-6 border-4 border-blue-600">
+      <div className="bg-white p-10 rounded shadow max-w-xl w-full text-center space-y-4">
         <h1 className="text-3xl font-bold text-blue-600">
           Certificate of Completion
         </h1>
 
-        <p className="text-lg text-gray-700">
-          This certifies that
-        </p>
+        <p>You have successfully completed</p>
+        <p className="text-xl font-semibold">{certificate.courseTitle}</p>
 
-        <p className="text-2xl font-semibold">
-          {studentName}
-        </p>
+        <a
+          href={certificate.downloadUrl}
+          className="bg-green-600 text-white px-6 py-2 rounded inline-block"
+        >
+          Download Certificate
+        </a>
 
-        <p className="text-lg text-gray-700">
-          has successfully completed the course
-        </p>
-
-        <p className="text-2xl font-semibold">
-          {courseTitle}
-        </p>
-
-        <p className="text-gray-600">
-          Completion Date: {completionDate}
-        </p>
-
-        <div className="pt-6 flex justify-center space-x-4">
-          <button className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition">
-            Download Certificate
-          </button>
-
-          <Link
-            to="/student/dashboard"
-            className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition"
-          >
-            Back to Dashboard
-          </Link>
-        </div>
-
-        <p className="text-sm text-gray-400 pt-4">
-          Certificate ID: COURSE-{courseId}-2025
-        </p>
+        <Link
+          to="/student/dashboard"
+          className="block text-blue-600 hover:underline"
+        >
+          Back to Dashboard
+        </Link>
       </div>
     </div>
   );

@@ -61,8 +61,9 @@ function CourseQuizzes() {
                   Edit
                 </Link>
 
+                {/* ✅ FIXED: CORRECT GRADING ROUTE */}
                 <Link
-                  to={`/instructor/quizzes/${quiz.id}/grade`}
+                  to={`/instructor/quizzes/${quiz.id}/submissions`}
                   className="text-green-600 hover:underline text-sm"
                 >
                   Grade

@@ -15,6 +15,7 @@ import Courses from "./pages/student/Courses";
 import CourseDetails from "./pages/student/CourseDetails";
 import Lesson from "./pages/student/Lesson";
 import Certificates from "./pages/student/Certificate";
+import Quiz from "./pages/student/Quiz";
 
 /* Instructor pages */
 import InstructorDashboard from "./pages/instructor/InstructorDashboard";
@@ -35,6 +36,10 @@ import EditQuestion from "./pages/instructor/EditQuestion";
 /* 🆕 Course Management Hub */
 import CourseManage from "./pages/instructor/CourseManage";
 import CourseStudents from "./pages/instructor/CourseStudents";
+
+/* 🆕 GRADING PAGES */
+import QuizSubmissions from "./pages/instructor/QuizSubmissions";
+import QuizAttempt from "./pages/instructor/QuizAttempt";
 
 /* Route guards */
 import ProtectedRoute from "./routes/ProtectedRoute";
@@ -74,7 +79,10 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
-          {/* Student */}
+          {/* ======================
+              STUDENT ROUTES
+             ====================== */}
+
           <Route
             path="/student/dashboard"
             element={
@@ -114,6 +122,17 @@ function App() {
           />
 
           <Route
+            path="/quiz/:id"
+            element={
+              <ProtectedRoute>
+                <StudentRoute>
+                  <Quiz />
+                </StudentRoute>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
             path="/certificates"
             element={
               <ProtectedRoute>
@@ -124,7 +143,10 @@ function App() {
             }
           />
 
-          {/* Instructor */}
+          {/* ======================
+              INSTRUCTOR ROUTES
+             ====================== */}
+
           <Route
             path="/instructor/dashboard"
             element={
@@ -148,7 +170,7 @@ function App() {
           />
 
           {/* =========================
-              🆕 COURSE MANAGEMENT HUB
+              COURSE MANAGEMENT HUB
              ========================= */}
           <Route
             path="/instructor/courses/:courseId/manage"
@@ -167,10 +189,9 @@ function App() {
           </Route>
 
           {/* =========================
-              🔁 BACKWARD-COMPATIBLE ROUTES
+              BACKWARD-COMPATIBLE ROUTES
              ========================= */}
 
-          {/* Edit Course (old direct route) */}
           <Route
             path="/instructor/courses/:courseId/edit"
             element={
@@ -182,7 +203,6 @@ function App() {
             }
           />
 
-          {/* Lessons */}
           <Route
             path="/instructor/courses/:courseId/lessons"
             element={
@@ -216,7 +236,6 @@ function App() {
             }
           />
 
-          {/* Quizzes */}
           <Route
             path="/instructor/courses/:courseId/quizzes"
             element={
@@ -250,13 +269,38 @@ function App() {
             }
           />
 
-          {/* Quiz Questions */}
           <Route
             path="/instructor/quizzes/:quizId/questions"
             element={
               <ProtectedRoute>
                 <InstructorRoute>
                   <QuizQuestions />
+                </InstructorRoute>
+              </ProtectedRoute>
+            }
+          />
+
+          {/* =========================
+              🆕 GRADING ROUTES (ADDED)
+             ========================= */}
+
+          <Route
+            path="/instructor/quizzes/:quizId/submissions"
+            element={
+              <ProtectedRoute>
+                <InstructorRoute>
+                  <QuizSubmissions />
+                </InstructorRoute>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/instructor/quizzes/attempt/:attemptId"
+            element={
+              <ProtectedRoute>
+                <InstructorRoute>
+                  <QuizAttempt />
                 </InstructorRoute>
               </ProtectedRoute>
             }
