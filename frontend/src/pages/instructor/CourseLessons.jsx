@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import api from "../../api/axios";
+import toast from "react-hot-toast";
+import { confirmDelete } from "../../components/ConfirmDeleteToast";
 
 function CourseLessons() {
   const { courseId } = useParams();
+
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -13,6 +16,7 @@ function CourseLessons() {
       setLessons(res.data);
     } catch (err) {
       console.error("Failed to load lessons", err);
+      toast.error("Failed to load lessons");
     } finally {
       setLoading(false);
     }
@@ -22,19 +26,24 @@ function CourseLessons() {
     fetchLessons();
   }, [courseId]);
 
-  const handleDelete = async (lessonId) => {
-    if (!window.confirm("Delete this lesson?")) return;
-
-    try {
-      await api.delete(`/lessons/${lessonId}`);
-      setLessons((prev) => prev.filter((l) => l.id !== lessonId));
-    } catch (err) {
-      console.error("Failed to delete lesson", err);
-    }
+  const handleDeleteLesson = (lessonId) => {
+    confirmDelete({
+      message: "Delete this lesson?",
+      onConfirm: async () => {
+        try {
+          await api.delete(`/lessons/${lessonId}`);
+          setLessons((prev) => prev.filter((l) => l.id !== lessonId));
+          toast.success("Lesson deleted");
+        } catch {
+          toast.error("Failed to delete lesson");
+        }
+      },
+    });
   };
 
   return (
     <div className="space-y-6">
+      {/* HEADER */}
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Course Lessons</h1>
 
@@ -46,6 +55,7 @@ function CourseLessons() {
         </Link>
       </div>
 
+      {/* CONTENT */}
       {loading ? (
         <p>Loading lessons...</p>
       ) : lessons.length === 0 ? (
@@ -66,7 +76,7 @@ function CourseLessons() {
                 </p>
               </div>
 
-              <div className="space-x-3">
+              <div className="flex items-center space-x-4">
                 <Link
                   to={`/instructor/lessons/${lesson.id}/edit`}
                   className="text-blue-600 hover:underline text-sm"
@@ -75,7 +85,7 @@ function CourseLessons() {
                 </Link>
 
                 <button
-                  onClick={() => handleDelete(lesson.id)}
+                  onClick={() => handleDeleteLesson(lesson.id)}
                   className="text-red-600 hover:underline text-sm"
                 >
                   Delete

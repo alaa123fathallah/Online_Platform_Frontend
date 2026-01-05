@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../../api/axios";
+import toast from "react-hot-toast";
 
 function CreateQuiz() {
   const { courseId } = useParams();
@@ -13,8 +14,7 @@ function CreateQuiz() {
     title: "",
     lessonId: "",
     passingScore: 50,
-    timeLimit: 10,
-    type: "MCQ",
+    timeLimit: 10
   });
 
   useEffect(() => {
@@ -45,15 +45,16 @@ function CreateQuiz() {
         courseId: Number(courseId),
         lessonId: Number(form.lessonId),
         passingScore: Number(form.passingScore),
-        timeLimit: Number(form.timeLimit),
-        type: form.type,
+        timeLimit: Number(form.timeLimit)
       });
 
-      // ✅ redirect to question creation
+      toast.success("Quiz created");
+
+      // redirect to question creation
       navigate(`/instructor/quizzes/${res.data.id}/questions`);
     } catch (err) {
       console.error("Failed to create quiz", err);
-      alert("Failed to create quiz");
+      toast.error("Failed to create quiz");
     }
   };
 
@@ -86,19 +87,6 @@ function CreateQuiz() {
             {lessons.map((l) => (
               <option key={l.id} value={l.id}>{l.title}</option>
             ))}
-          </select>
-        </div>
-
-        <div>
-          <label className="block font-medium">Quiz Type</label>
-          <select
-            name="type"
-            value={form.type}
-            onChange={handleChange}
-            className="w-full border px-3 py-2 rounded"
-          >
-            <option value="MCQ">MCQ</option>
-            <option value="Subjective">Subjective</option>
           </select>
         </div>
 

@@ -32,6 +32,10 @@ import EditQuiz from "./pages/instructor/EditQuiz";
 import QuizQuestions from "./pages/instructor/QuizQuestions";
 import EditQuestion from "./pages/instructor/EditQuestion";
 
+/* 🆕 Course Management Hub */
+import CourseManage from "./pages/instructor/CourseManage";
+import CourseStudents from "./pages/instructor/CourseStudents";
+
 /* Route guards */
 import ProtectedRoute from "./routes/ProtectedRoute";
 import StudentRoute from "./routes/StudentRoute";
@@ -52,7 +56,7 @@ function HomeRedirect() {
 function App() {
   return (
     <>
-      {/* ✅ GLOBAL TOASTS */}
+      {/* Global toast notifications */}
       <Toaster
         position="top-right"
         toastOptions={{
@@ -143,7 +147,30 @@ function App() {
             }
           />
 
-          {/* ✅ EDIT COURSE */}
+          {/* =========================
+              🆕 COURSE MANAGEMENT HUB
+             ========================= */}
+          <Route
+            path="/instructor/courses/:courseId/manage"
+            element={
+              <ProtectedRoute>
+                <InstructorRoute>
+                  <CourseManage />
+                </InstructorRoute>
+              </ProtectedRoute>
+            }
+          >
+            <Route path="lessons" element={<CourseLessons />} />
+            <Route path="quizzes" element={<CourseQuizzes />} />
+            <Route path="students" element={<CourseStudents />} />
+            <Route path="edit" element={<EditCourse />} />
+          </Route>
+
+          {/* =========================
+              🔁 BACKWARD-COMPATIBLE ROUTES
+             ========================= */}
+
+          {/* Edit Course (old direct route) */}
           <Route
             path="/instructor/courses/:courseId/edit"
             element={
@@ -178,7 +205,6 @@ function App() {
             }
           />
 
-          {/* ✅ EDIT LESSON */}
           <Route
             path="/instructor/lessons/:lessonId/edit"
             element={
@@ -213,7 +239,6 @@ function App() {
             }
           />
 
-          {/* ✅ EDIT QUIZ */}
           <Route
             path="/instructor/quizzes/:quizId/edit"
             element={
@@ -237,7 +262,6 @@ function App() {
             }
           />
 
-          {/* ✅ EDIT QUESTION */}
           <Route
             path="/instructor/questions/:questionId/edit"
             element={
